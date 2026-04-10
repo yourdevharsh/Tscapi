@@ -1,3 +1,7 @@
 /target/
 **/*.rs.bk
 Cargo.lock
+/tree-sitter-typescript/
+log.html
+typescript.ts
+typescript.d.ts

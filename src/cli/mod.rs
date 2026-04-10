@@ -8,5 +8,6 @@ pub struct Cli {
 
 pub fn return_args() {
     let args = Cli::parse();
+    
     println!("first: {:?}, second: {:?}", args.first, args.second);
 }
