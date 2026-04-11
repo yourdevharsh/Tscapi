@@ -1,7 +1,6 @@
-
 // mod cli;
 mod tsparser;
-
+mod freader;
 
 fn main() {
     // cli::return_args();
@@ -10,8 +9,8 @@ fn main() {
 
     let file_path = "C:/NodeJS/System/Tscapi/try.ts";
 
-    let Ok(code) = std::fs::read_to_string(file_path) else {
-        eprintln!("Failed to read file.");
+    let Ok(code) = freader::read_file(file_path) else {
+        eprintln!("Failed to read file!");
         return;
     };
 
@@ -22,21 +21,24 @@ fn main() {
 
     let root_node = tree.root_node();
 
-    // let kind = root_node.kind();
-    // let text = root_node.utf8_text(code.as_bytes()).unwrap_or("");
-    
-    for i in 0..root_node.named_child_count() {
-        let child = root_node.child(i as u32).unwrap();
-        print!("<{}> {} \n", child, child.utf8_text(code.as_bytes()).unwrap_or(""));
-    }
-
     let mut cursor = root_node.walk();
+
+    let mut ast: std::collections::HashMap<String, Box<dyn std::any::Any>> = std::collections::HashMap::new();
 
     fn traverse(cursor: &mut tree_sitter::TreeCursor, code: &str) {
         loop {
             let node = cursor.node();
 
-            println!("Kind: {}", node.kind());
+            if node.is_named() {
+                // println!(
+                //     "Kind: {} \n Text: {} \n Field Name: {:?} \n",
+                //     node.kind(),
+                //     node.utf8_text(code.as_bytes()).unwrap_or(""),
+                //     cursor.field_name()
+                // );
+
+
+            }
 
             if cursor.goto_first_child() {
                 traverse(cursor, code);
@@ -50,11 +52,4 @@ fn main() {
     }
 
     traverse(&mut cursor, &code);
-
-    // println!("{:?}, {:?}", kind, text);
-
-    // match parser.parse(code) {
-    //     Ok(tree) => println!("Successfully parsed: {:?}", tree.root_node().child(0)),
-    //     Err(e) => eprintln!("Error: {}", e),
-    // }
 }
