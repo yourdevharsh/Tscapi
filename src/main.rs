@@ -1,6 +1,9 @@
+use std::process::id;
+
 // mod cli;
 mod tsparser;
 mod freader;
+mod data_formats;
 
 fn main() {
     // cli::return_args();
@@ -23,9 +26,13 @@ fn main() {
 
     let mut cursor = root_node.walk();
 
-    let mut ast: std::collections::HashMap<String, Box<dyn std::any::Any>> = std::collections::HashMap::new();
+    let mut ast: data_formats::IR = data_formats::IR::new();
 
-    fn traverse(cursor: &mut tree_sitter::TreeCursor, code: &str) {
+    fn traverse(
+        cursor: &mut tree_sitter::TreeCursor,
+        code: &str,
+        ast: &mut data_formats::IR
+    ) {
         loop {
             let node = cursor.node();
 
@@ -37,11 +44,25 @@ fn main() {
                 //     cursor.field_name()
                 // );
 
+                if node.kind() == "function_declaration" {
+                    let Some(name_node) = node.child_by_field_name("name") else {
+                        eprint!("No function name node");
+                        return;
+                    };
 
+                    let function_name = name_node
+                        .utf8_text(code.as_bytes())
+                        .unwrap_or("")
+                        .to_string();
+
+                    let function_text = node.utf8_text(code.as_bytes()).unwrap_or("").to_string();
+
+                    
+                }
             }
 
             if cursor.goto_first_child() {
-                traverse(cursor, code);
+                traverse(cursor, code, ast);
                 cursor.goto_parent();
             }
 
@@ -51,5 +72,7 @@ fn main() {
         }
     }
 
-    traverse(&mut cursor, &code);
+    traverse(&mut cursor, &code, &mut ast);
+
+    // println!("{:?}", ast.id);
 }
