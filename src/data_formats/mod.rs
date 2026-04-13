@@ -34,7 +34,11 @@ impl IR {
         }
     }
 
-    fn insert(&mut self, data: IR) {
-        
+    pub fn add_id(&mut self, id: String) {
+        self.id = id;
+    }
+
+    pub fn add_node_type(&mut self, node_type: String) {
+        self.node_type = node_type;
     }
 }

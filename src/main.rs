@@ -57,7 +57,7 @@ fn main() {
 
                     let function_text = node.utf8_text(code.as_bytes()).unwrap_or("").to_string();
 
-                    
+                    ast.add_node_type(node.kind().to_string());
                 }
             }
 
